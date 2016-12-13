@@ -97,14 +97,6 @@ struct pcm_config pcm_config_sco = {
     .format = PCM_FORMAT_S16_LE,
 };
 
-struct pcm_config pcm_config_sco_wide = {
-    .channels = 1,
-    .rate = 16000,
-    .period_size = 128,
-    .period_count = 2,
-    .format = PCM_FORMAT_S16_LE,
-};
-
 struct pcm_config pcm_config_voice = {
     .channels = 2,
     .rate = 8000,
@@ -377,8 +369,6 @@ static void select_devices(struct audio_device *adev)
 /* must be called with hw device mutex locked, OK to hold other mutexes */
 static void start_bt_sco(struct audio_device *adev)
 {
-    struct pcm_config *sco_config;
-
     if (adev->pcm_sco_rx || adev->pcm_sco_tx) {
         ALOGW("%s: SCO PCMs already open!\n", __func__);
         return;
@@ -386,13 +376,8 @@ static void start_bt_sco(struct audio_device *adev)
 
     ALOGV("%s: Opening SCO PCMs", __func__);
 
-    if (adev->wb_amr)
-        sco_config = &pcm_config_sco_wide;
-    else
-        sco_config = &pcm_config_sco;
-
-    adev->pcm_sco_rx = pcm_open(PCM_CARD, PCM_DEVICE_SCO, PCM_OUT,
-            sco_config);
+    adev->pcm_sco_rx = pcm_open(PCM_CARD, PCM_DEVICE_SCO, PCM_OUT | PCM_MONOTONIC,
+            &pcm_config_sco);
     if (adev->pcm_sco_rx && !pcm_is_ready(adev->pcm_sco_rx)) {
         ALOGE("%s: cannot open PCM SCO RX stream: %s",
               __func__, pcm_get_error(adev->pcm_sco_rx));
@@ -400,7 +385,7 @@ static void start_bt_sco(struct audio_device *adev)
     }
 
     adev->pcm_sco_tx = pcm_open(PCM_CARD, PCM_DEVICE_SCO, PCM_IN,
-            sco_config);
+            &pcm_config_sco);
     if (adev->pcm_sco_tx && !pcm_is_ready(adev->pcm_sco_tx)) {
         ALOGE("%s: cannot open PCM SCO TX stream: %s",
               __func__, pcm_get_error(adev->pcm_sco_tx));
@@ -821,12 +806,6 @@ static int do_out_standby(struct stream_out *out)
 
     ALOGV("%s: output standby: %d", __func__, out->standby);
 
-    /* if in-call, dont turn off PCM */
-    if (adev->in_call) {
-        ALOGV("%s: output standby in-call, exiting...", __func__);
-        return 0;
-    }
-
     if (!out->standby) {
         for (i = 0; i < PCM_TOTAL; i++) {
             if (out->pcm[i]) {
@@ -1080,12 +1059,6 @@ static int do_in_standby(struct stream_in *in)
 {
     struct audio_device *adev = in->dev;
 
-    /* if in-call, dont turn off PCM */
-    if (adev->in_call) {
-        ALOGV("%s: input standby in-call, exiting...", __func__);
-        return 0;
-    }
-
     if (!in->standby) {
         pcm_close(in->pcm);
         in->pcm = NULL;
@@ -1317,7 +1290,8 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
                                    audio_devices_t devices,
                                    audio_output_flags_t flags,
                                    struct audio_config *config,
-                                   struct audio_stream_out **stream_out)
+                                   struct audio_stream_out **stream_out,
+                                   const char *address __unused)
 {
     struct audio_device *adev = (struct audio_device *)dev;
     struct stream_out *out;
@@ -1570,7 +1544,10 @@ static int adev_open_input_stream(struct audio_hw_device *dev,
                                   audio_io_handle_t handle,
                                   audio_devices_t devices,
                                   struct audio_config *config,
-                                  struct audio_stream_in **stream_in)
+                                  struct audio_stream_in **stream_in,
+                                  audio_input_flags_t flags __unused,
+                                  const char *address __unused,
+                                  audio_source_t source __unused)
 {
     struct audio_device *adev = (struct audio_device *)dev;
     struct stream_in *in;
@@ -1612,6 +1589,7 @@ static int adev_open_input_stream(struct audio_hw_device *dev,
     in->device = devices & ~AUDIO_DEVICE_BIT_IN;
     in->io_handle = handle;
     in->channel_mask = config->channel_mask;
+    /* TODO support low latency pcm config -> AUDIO_INPUT_FLAG_FAST */
 
     in->buffer = malloc(pcm_config_in.period_size * pcm_config_in.channels
                                                * audio_stream_frame_size(&in->stream.common));
