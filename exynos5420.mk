@@ -21,8 +21,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
 # Device uses high-density artwork where available
-PRODUCT_AAPT_PREF_CONFIG := xxhdpi
-PRODUCT_AAPT_PREBUILT_DPI := xhdpi hdpi mdpi
+#PRODUCT_AAPT_PREF_CONFIG := xxhdpi
+#PRODUCT_AAPT_PREBUILT_DPI := xhdpi hdpi mdpi
 
 # System properties
 -include $(LOCAL_PATH)/system_prop.mk
@@ -186,8 +186,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.debug.multi_window=true
 	
 # Deathly Adiutor App
-PRODUCT_PACKAGES += \
-    DeathlyAdiutor
+#PRODUCT_PACKAGES += \
+#    DeathlyAdiutor
 
 # call dalvik heap and hwui config
 $(call inherit-product, frameworks/native/build/phone-xxhdpi-3072-dalvik-heap.mk)
