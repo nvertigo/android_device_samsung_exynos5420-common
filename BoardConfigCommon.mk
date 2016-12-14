@@ -35,6 +35,9 @@ BOARD_HAVE_BLUETOOTH_BCM := true
 BOARD_HAVE_SAMSUNG_BLUETOOTH := true
 BOARD_BLUEDROID_VENDOR_CONF := $(LOCAL_PATH)/bluetooth/libbt_vndcfg.txt
 
+# Boot-Image (put the SEANDROIDENFORCE hack in place)
+BOARD_CUSTOM_MKBOOTIMG = $(LOCAL_PATH)/scripts/mkbootimage.sh
+
 # Camera
 BOARD_CAMERA_SNUMINTS := 34
 BOARD_NEEDS_MEMORYHEAPION := true
