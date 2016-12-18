@@ -86,7 +86,7 @@ BOARD_USES_VIRTUAL_DISPLAY := true
 BOARD_USES_HWC_SERVICES := true
 
 # Include path
-TARGET_SPECIFIC_HEADER_PATH += device/samsung/exynos5420/include
+TARGET_SPECIFIC_HEADER_PATH += device/samsung/exynos5420-common/include
 
 # Hardware
 BOARD_HARDWARE_CLASS += hardware/samsung/cmhw
