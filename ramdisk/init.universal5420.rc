@@ -431,8 +431,8 @@ on fs
 # Set watchdog timer to 30 seconds and pet it every 10 seconds to get a 20 second margin
 service watchdogd /sbin/watchdogd 10 20
     class core
-    seclabel u:r:watchdogd:s0
     disabled
+    seclabel u:r:watchdogd:s0
 
 # Bluetooth LE 2 wired Test
 #service LE_dut_cmd_on /system/bin/bttestintf enable
@@ -565,10 +565,10 @@ on property:sys.mobicoredaemon.enable=true
 #on property:persist.sys.storage_preload=0
 #    start umount_service
 
-# SSWAP
+# SSWAP: samsungs proprietary version of zswap
 service sswap /sbin/sswap -s
     class core
     user root
     group root
-    seclabel u:r:sswap:s0
     oneshot
+    seclabel u:r:sswap:s0
