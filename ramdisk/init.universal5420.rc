@@ -549,7 +549,7 @@ service cs_service /system/bin/cs
 #on property:ro.SecEDS.enable=false
 #    stop TvoutService_C
 
-on property:sys.mobicoredaemon.enable=true
+on property:init.svc.mobicore=running
     start cs_service
 
 # umount service
