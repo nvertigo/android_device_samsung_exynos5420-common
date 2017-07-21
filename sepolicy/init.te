@@ -23,3 +23,8 @@ allow init debugfs:file write;
 
 # denied { setattr relabelto } name="rear_camfw"
 allow init camera_device:file { relabelto setattr };
+
+# sswap (sammy's proprietary zswap
+allow init sswap:process { noatsecure rlimitinh siginh transition };
+allow init kernel:system module_request;
+
