@@ -43,3 +43,4 @@ allow system_server debugfs:file r_file_perms;
 
 # Unknown
 allow system_server kernel:process setsched;
+allow system_server unlabeled:file unlink;
