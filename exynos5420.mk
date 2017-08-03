@@ -37,6 +37,10 @@ PRODUCT_COPY_FILES += \
 # Boot animation
 TARGET_BOOTANIMATION_HALF_RES := true
 
+# Busybox
+PRODUCT_PACKAGES += \
+    busybox
+
 # Camera
 PRODUCT_PACKAGES += \
     camera.universal5420 \

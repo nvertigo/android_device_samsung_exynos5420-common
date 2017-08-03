@@ -72,3 +72,6 @@
 
 #samsung's sswap
 /dev/block/vnswap0      u:object_r:sswap_device:s0
+
+# bring back busybox
+/system/bin/busybox                   --                        u:object_r:toolbox_exec:s0
